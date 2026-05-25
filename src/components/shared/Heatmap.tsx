@@ -47,10 +47,10 @@ export const Heatmap: React.FC<HeatmapProps> = ({ data }) => {
   };
 
   return (
-    <div className="w-full bg-zinc-900/60 backdrop-blur-xl border border-zinc-800/80 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+    <div className="w-full bg-zinc-900/60 backdrop-blur-xl border border-zinc-800/80 rounded-2xl p-6 shadow-2xl relative overflow-visible">
       {/* Decorative neon ambient backlights */}
-      <div className="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/10 rounded-full blur-[80px]" />
-      <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-emerald-500/5 rounded-full blur-[80px]" />
+      <div className="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/10 rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-emerald-500/5 rounded-full blur-[80px] pointer-events-none" />
 
       <div className="flex items-center justify-between mb-4">
         <div>
@@ -73,7 +73,7 @@ export const Heatmap: React.FC<HeatmapProps> = ({ data }) => {
         </div>
       </div>
 
-      <div className="flex gap-2 items-stretch overflow-x-auto pb-2 scrollbar-thin scrollbar-track-zinc-950 scrollbar-thumb-zinc-800">
+      <div className="flex gap-2 items-stretch overflow-visible">
         {/* Days label column */}
         <div className="flex flex-col justify-between text-[10px] text-zinc-500 pr-1 py-1 select-none font-medium">
           <span>{daysOfWeek[0]}</span>
@@ -102,14 +102,22 @@ export const Heatmap: React.FC<HeatmapProps> = ({ data }) => {
                     className={`group relative w-3 h-3 rounded-[2.5px] cursor-pointer transition-colors duration-200 ${getCellColor(xpValue)}`}
                   >
                     {/* Interactive Glassmorphic Tooltip */}
-                    <div className="pointer-events-none absolute bottom-5 left-1/2 -translate-x-1/2 z-50 mb-2 w-32 scale-0 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-200 origin-bottom">
+                    <div className={`pointer-events-none absolute left-1/2 -translate-x-1/2 z-50 w-32 scale-0 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-200 ${
+                      dIndex === 0
+                        ? 'top-5 mt-2 origin-top'
+                        : 'bottom-5 mb-2 origin-bottom'
+                    }`}>
                       <div className="bg-zinc-950/90 backdrop-blur-md border border-zinc-800/80 rounded-lg p-2 shadow-2xl text-[10px] text-zinc-200 leading-tight">
                         <p className="font-semibold text-emerald-400 mb-0.5">{getIntensityLabel(xpValue)}</p>
                         <p className="text-zinc-500 font-mono">
                           {date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                         </p>
                       </div>
-                      <div className="w-1.5 h-1.5 bg-zinc-950/90 border-r border-b border-zinc-800/80 rotate-45 absolute -bottom-1 left-1/2 -translate-x-1/2" />
+                      <div className={`w-1.5 h-1.5 bg-zinc-950/90 rotate-45 absolute left-1/2 -translate-x-1/2 ${
+                        dIndex === 0
+                          ? 'border-l border-t border-zinc-800/80 -top-1'
+                          : 'border-r border-b border-zinc-800/80 -bottom-1'
+                      }`} />
                     </div>
                   </motion.div>
                 );
