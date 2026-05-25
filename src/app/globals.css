@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-zinc-950: #040405;
+  --color-zinc-900: #0a0a0c;
+  --color-zinc-850: #121215;
+  --color-zinc-800: #1a1a1f;
+  --color-zinc-700: #2a2a35;
+}
+
+:root {
+  --background: #040405;
+  --foreground: #fafafa;
+  color-scheme: dark;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  overflow-x: hidden;
+}
+
+/* Custom developer-themed glow animations */
+@keyframes neon-glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.2), 0 0 20px rgba(16, 185, 129, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4), 0 0 35px rgba(16, 185, 129, 0.2);
+  }
+}
+
+.glowing-node {
+  animation: neon-glow 3s infinite ease-in-out;
+}
+
+/* Custom premium scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #040405;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e1e24;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2a2a35;
+}
+
+/* Premium Typography Facelift */
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.025em;
+  font-feature-settings: "dlig" on, "ss01" on, "ss02" on;
+}
+
+/* Interactive theme transition hooks */
+* {
+  transition-property: background-color, border-color, text-decoration-color, fill, stroke;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Cyberpunk pulsing glowing nodes */
+@keyframes cyberpunk-glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(217, 70, 239, 0.2), 0 0 20px rgba(217, 70, 239, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(217, 70, 239, 0.55), 0 0 35px rgba(245, 158, 11, 0.25);
+  }
+}
+
+.cyberpunk-pulse {
+  animation: cyberpunk-glow 4s infinite ease-in-out;
+}

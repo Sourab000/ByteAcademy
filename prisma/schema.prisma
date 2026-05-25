@@ -1,0 +1,148 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                String             @id @default(uuid())
+  email             String             @unique
+  name              String?
+  avatarUrl         String?
+  xp                Int                @default(0)
+  level             Int                @default(1)
+  streakDays        Int                @default(0)
+  lastActiveAt      DateTime           @default(now())
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  
+  // Relations
+  streaks           Streak[]
+  dsaProgresses     DsaProgress[]
+  languageProgress  LanguageProgress[]
+  quizSubmissions   QuizSubmission[]
+  mockInterviews    MockInterview[]
+  achievements      Achievement[]
+  revisionItems     RevisionItem[]
+  tutorMessages     TutorMessage[]
+  uiPreferences     UiPreferences?
+}
+
+model Streak {
+  id        String   @id @default(uuid())
+  userId    String
+  date      DateTime @default(now())
+  xpEarned  Int      @default(0)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+}
+
+model DsaProgress {
+  id                String   @id @default(uuid())
+  userId            String
+  topicId           String   // e.g., "arrays", "trees"
+  masteryScore      Int      @default(0)
+  completionPercent Int      @default(0)
+  completedQuestions String[] // Array of question IDs
+  unlocked          Boolean  @default(false)
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, topicId])
+}
+
+model LanguageProgress {
+  id                 String   @id @default(uuid())
+  userId             String
+  languageId         String   // e.g., "python", "typescript"
+  completedLessons   String[] // Array of completed lesson IDs
+  xpEarned           Int      @default(0)
+  level              Int      @default(1)
+  currentLessonIndex Int      @default(0)
+  updatedAt          DateTime @updatedAt
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, languageId])
+}
+
+model QuizSubmission {
+  id        String   @id @default(uuid())
+  userId    String
+  quizId    String
+  topicId   String
+  score     Int
+  maxScore  Int
+  xpEarned  Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model MockInterview {
+  id              String   @id @default(uuid())
+  userId          String
+  title           String   // e.g., "Two Sum & Graph BFS"
+  difficulty      String   // "EASY", "MEDIUM", "HARD"
+  codeSnippet     String
+  language        String
+  feedback        String   // AI detailed review markdown
+  score           Int      // 0-100
+  durationSeconds Int
+  createdAt       DateTime @default(now())
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Achievement {
+  id            String   @id @default(uuid())
+  userId        String
+  achievementId String   // e.g., "streak_7", "dsa_master"
+  title         String
+  description   String
+  icon          String
+  unlockedAt    DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+}
+
+model RevisionItem {
+  id             String   @id @default(uuid())
+  userId         String
+  topicId        String   // e.g., "arrays" or "python_loops"
+  nextReviewDate DateTime
+  intervalDays   Int      @default(1)
+  easeFactor     Float    @default(2.5)
+  repetitions    Int      @default(0)
+  type           String   // "DSA" or "LANGUAGE"
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, topicId, type])
+}
+
+model TutorMessage {
+  id        String   @id @default(uuid())
+  userId    String
+  mode      String   // e.g., "Explain Simply", "Hint Only", etc.
+  sender    String   // "user" or "tutor"
+  text      String
+  timestamp String   // e.g., "12:15 PM"
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model UiPreferences {
+  id             String   @id @default(uuid())
+  userId         String   @unique
+  theme          String   @default("emerald") // "dark" | "oled" | "emerald" | "cyberpunk"
+  fontSize       String   @default("standard") // "compact" | "standard" | "large"
+  motionPhysics  String   @default("spring") // "spring" | "tween" | "reduced"
+  soundEffects   Boolean  @default(true)
+  dailyReminder  Boolean  @default(true)
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
